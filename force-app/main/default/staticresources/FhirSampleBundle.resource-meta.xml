@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Private</cacheControl>
+    <contentType>application/json</contentType>
+    <description>Synthetic FHIR R4 Patient bundle used by unit tests. Fictional data only.</description>
+</StaticResource>
