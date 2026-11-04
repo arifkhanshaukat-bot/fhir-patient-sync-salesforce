@@ -1,0 +1,10 @@
+.sf/
+.sfdx/
+.localdevserver/
+node_modules/
+coverage/
+.vscode/
+*.log
+.env
+*.key
+authurl.txt

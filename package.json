@@ -1,0 +1,23 @@
+{
+  "name": "fhir-patient-sync-salesforce",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Apex batch integration that syncs FHIR R4 Patient resources into Salesforce with retries and a support-readable error log",
+  "scripts": {
+    "test": "sfdx-lwc-jest --passWithNoTests",
+    "test:coverage": "sfdx-lwc-jest --coverage --passWithNoTests",
+    "lint": "eslint \"force-app/**/lwc/**/*.js\" --no-error-on-unmatched-pattern",
+    "prettier:check": "prettier --check \"force-app/**/*.{cls,trigger,js,html,xml,json}\" --plugin=prettier-plugin-apex"
+  },
+  "devDependencies": {
+    "@salesforce/sfdx-lwc-jest": "^7.0.0",
+    "@salesforce/eslint-config-lwc": "^3.6.0",
+    "@lwc/eslint-plugin-lwc": "^2.0.0",
+    "@salesforce/eslint-plugin-lightning": "^1.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jest": "^28.0.0",
+    "prettier": "^3.3.0",
+    "prettier-plugin-apex": "^2.1.0"
+  }
+}
