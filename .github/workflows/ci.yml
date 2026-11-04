@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - name: Lint LWC
+        run: npm run lint
+      - name: LWC unit tests (Jest)
+        run: npm run test:coverage
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  apex-tests:
+    # Runs only when a Dev Hub auth URL is stored as a repository secret.
+    # See README > "Running the Apex tests in CI".
+    needs: static-checks
+    runs-on: ubuntu-latest
+    env:
+      SF_DEVHUB_AUTH_URL: ${{ secrets.SF_DEVHUB_AUTH_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.SF_DEVHUB_AUTH_URL != ''
+      - name: Install Salesforce CLI
+        if: env.SF_DEVHUB_AUTH_URL != ''
+        run: npm install --global @salesforce/cli
+      - name: Authenticate Dev Hub
+        if: env.SF_DEVHUB_AUTH_URL != ''
+        run: |
+          echo "$SF_DEVHUB_AUTH_URL" > ./authurl.txt
+          sf org login sfdx-url --sfdx-url-file ./authurl.txt --alias devhub --set-default-dev-hub
+          rm ./authurl.txt
+      - name: Create scratch org, deploy, run Apex tests
+        if: env.SF_DEVHUB_AUTH_URL != ''
+        run: |
+          sf org create scratch --definition-file config/project-scratch-def.json --alias ci --set-default --duration-days 1 --wait 10
+          sf project deploy start --wait 20
+          sf apex run test --test-level RunLocalTests --code-coverage --result-format human --wait 20
+      - name: Delete scratch org
+        if: always() && env.SF_DEVHUB_AUTH_URL != ''
+        run: sf org delete scratch --target-org ci --no-prompt || true
