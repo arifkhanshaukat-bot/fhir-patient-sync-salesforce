@@ -17,6 +17,7 @@ jobs:
       - name: Lint LWC
         run: npm run lint
       - name: LWC unit tests (Jest)
+        if: hashFiles('force-app/**/lwc/**/*.js') != ''
         run: npm run test:coverage
       - name: Secret scan
         uses: gitleaks/gitleaks-action@v2
